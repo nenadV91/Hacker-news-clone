@@ -15,8 +15,8 @@
     color: $text-color-light;
   }
 
-  .author a,
-  .comments a {
+  &-author a,
+  &-comments a {
     color: $text-color-light;
 
     &:hover {

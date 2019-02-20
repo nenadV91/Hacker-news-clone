@@ -5,8 +5,15 @@ import moment from 'moment';
 class Story extends Component {
   render() {
     let { data, index } = this.props;
-    const date = moment(moment.unix(data.time), "YYYYMMDD").fromNow()
-    const url = `/item/${data.id}`
+
+    if(data === null) {
+      return <div 
+      className="loading">
+      Loading post...</div>
+    }
+
+    const dateParsed = moment.unix(data.time)
+    const date = moment(dateParsed, "YYYYMMDD").fromNow()
 
     return (
       <div className="story">
@@ -20,24 +27,26 @@ class Story extends Component {
           className="story-title no-decoration">{data.title}</a>
 
           <div className="story-info">
-            <div className="points">
+            <div className="story-points">
               <span>{data.score}</span>
               <span>points</span>
             </div>
 
-            <div className="author">
+            <div className="story-author">
               <span>by</span>
-              <span><a href="author">{data.by}</a></span>
+              <Link to={`/user/${data.by}`}>
+                <span>{data.by}</span>
+              </Link>
             </div>
 
-            <div className="time no-margin">
+            <div className="story-time no-margin">
               <span className="no-margin">{date}</span>
             </div>
 
             <span className="separator">|</span>
 
-            <div className="comments">
-              <Link to={url}>
+            <div className="story-comments">
+              <Link to={`/item/${data.id}`}>
                 <span>{data.descendants}</span>
                 <span>comments</span>
               </Link>
