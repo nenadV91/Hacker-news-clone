@@ -43,11 +43,11 @@ class Home extends Component {
     const { news } = this.state;
 
     if(news === null) {
-      return 'Loading news...'
+      return <div className="loading">Loading news...</div>
     }
 
     if(!news.length) {
-      return 'Nothing found.'
+      return <div className="loading">Nothing found.</div>
     }
 
     return news.map((item, index) =>
