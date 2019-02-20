@@ -1,4 +1,12 @@
 // utils
 @import 'utils/_variables';
 
+
+// base
+@import '_base';
+
+
 // components
+@import 'components/_navbar';
+@import 'components/_layout';
+@import 'components/_story';

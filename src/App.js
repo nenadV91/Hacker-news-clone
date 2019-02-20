@@ -10,7 +10,7 @@ const NotFound = () => <div>Page not found</div>
 class App extends Component {
   render() {
     return (
-      <div className="App">
+      <div className="app container">
         <Navbar />
         
         <Switch>
