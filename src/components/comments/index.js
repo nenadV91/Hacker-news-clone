@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import Comment from 'components/comment';
+import Loading from 'components/loading';
 
 class Comments extends Component {
   render() {
     let { data } = this.props;
 
     if(data === null) {
-      return <div 
-      className="loading">
-      Loading comments...</div>
+      return <Loading text="Loading comments..." />
     }
 
     if(data === false) {

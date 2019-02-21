@@ -91,7 +91,7 @@ class Item extends Component {
 
     return (
       <Layout>
-        <Story data={post} />
+        <Story single={true} data={post} />
         
         <div className="post-comments">
           <Comments data={comments} />

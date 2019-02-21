@@ -3,6 +3,7 @@ import axios from 'axios';
 import Layout from 'components/layout'
 import Story from 'components/story';
 import { Link } from 'react-router-dom';
+import Loading from 'components/loading';
 
 class Home extends Component {
   state = {
@@ -87,7 +88,7 @@ class Home extends Component {
     const { news, loading, page, size } = this.state;
 
     if(news === null || loading) {
-      return <div className="loading">Loading news...</div>
+      return <Loading text="Loading news..." />
     }
 
     if(!news || !news.length) {
@@ -100,7 +101,7 @@ class Home extends Component {
   }
 
 
-  renderLoading = () => {
+  renderNavigation = () => {
     let { page, loading, news } = this.state;
 
 
@@ -109,9 +110,15 @@ class Home extends Component {
     }
 
     return (
-      <Link 
-      className="next-page"
-      to={`/page/${+page + 1}`}>More</Link>
+      <div className="page-nav">
+        {+page ? <Link 
+        className="page-nav-item"
+        to={`/page/${+page - 1}`}>Back</Link> : null}
+
+        <Link 
+        className="page-nav-item"
+        to={`/page/${+page + 1}`}>More</Link>
+      </div>
     )
   }
 
@@ -120,7 +127,7 @@ class Home extends Component {
     return (
       <Layout>
         {this.renderNews()}
-        {this.renderLoading()}
+        {this.renderNavigation()}
       </Layout>
     );
   }

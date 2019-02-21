@@ -32,6 +32,14 @@
     margin: 0 !important;
   }
 
+  .back-button {
+    font-size: 10px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
   &-info {
     color: $text-color-light;
     font-size: 10px;

@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import moment from 'moment';
+import Loading from 'components/loading';
 
 class Story extends Component {
   render() {
-    let { data, index } = this.props;
+    let { data, index, single } = this.props;
 
     if(data === null) {
-      return <div 
-      className="loading">
-      Loading post...</div>
+      return <Loading text="Loading post..." />
     }
 
     if(!data) {
@@ -58,6 +57,10 @@ class Story extends Component {
               </Link>
             </div>
           </div>
+
+          {single ? <button
+          onClick={() => this.props.history.goBack()}
+          className="link-button text-light back-button">&larr; Back</button> : null}
         </div>
       </div>
     );
