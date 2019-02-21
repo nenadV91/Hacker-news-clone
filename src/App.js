@@ -5,8 +5,8 @@ import Navbar from 'components/navbar';
 import Home from 'pages/home';
 import Item from 'pages/item';
 import User from 'pages/user';
+import NotFound from 'pages/404';
 
-const NotFound = () => <div>Page not found</div>
 
 class App extends Component {
   render() {
@@ -16,6 +16,7 @@ class App extends Component {
         
         <Switch>
           <Route exact path="/" component={Home} />
+          <Route path="/page/:page" component={Home} />
           <Route path="/item/:id" component={Item} />
           <Route path="/user/:id" component={User} />
           <Route path="*" component={NotFound} />

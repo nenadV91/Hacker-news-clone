@@ -2,56 +2,116 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Layout from 'components/layout'
 import Story from 'components/story';
+import { Link } from 'react-router-dom';
 
 class Home extends Component {
   state = {
+    loading: false,
+    ids: null,
     news: null,
     size: 30,
     page: 0
   }
 
-  fetchStories = async ids => {
-    let { page, size } = this.state;
-    const start = page * size;
-    const base = 'https://hacker-news.firebaseio.com/v0';
-    const input = ids.slice(start, start + size).map(id => `${base}/item/${id}.json`);
+  componentDidUpdate = prev => {
+    // On component update get page parameter from url
+    // Check if its different then page value in state
+    // If its different efetch stories based on new page and update state
+    // This will render next batch of stories
 
-    try {
-      const data = await Promise.all(input.map(link => axios.get(link)))
-      return data.map(({ data }) => data)
-    } catch (err) {
-      console.log(err)
+    const page = this.props.match.params.page || 0;
+
+    if(page !== this.state.page) {
+      this.setState({ page, loading: true }, async () => {
+        const news = await this.fetchStories()
+        this.setState({ news, loading: false })
+      })
     }
   }
 
 
   componentWillMount = async () => {
-    const base = 'https://hacker-news.firebaseio.com/v0';
-    const path = '/topstories.json'
+    // Check if page parameter exists and set it in state if it does
+    // Fetch list of ids and after its finished set ids in state
+    // Then call fetchStories method and set news in state
+
+    this.base = 'https://hacker-news.firebaseio.com/v0'
+    const url = `${this.base}/topstories.json`;
+    const { match: { params: { page } } } = this.props;
+
+    if(page) {
+      this.setState({ page })
+    }
 
     try {
-      const ids = await axios.get(`${base}/${path}`);
-      const news = await this.fetchStories(ids.data)
-      this.setState({ news })
+      const ids = await axios.get(url);
+      this.setState({ ids: ids.data, loading: true }, async () => {
+        const news = await this.fetchStories()
+        this.setState({ news, loading: false })
+      })
     } catch (err) {
-      console.log(err)
+      this.setState({ news: false, loading: false })
+      return false;
     }
   }
 
 
-  renderNews = () => {
-    const { news } = this.state;
+  fetchStories = async () => {
+    // Get slice of ids to be fetched
+    // Wait for all stories to be fetched
+    // and then return the result
 
-    if(news === null) {
+    try {
+      const input = this.getSlice()
+      const data = await Promise.all(input.map(link => axios.get(link)))
+      return data.map(({ data }) => data)
+    } catch (err) {
+      return false;
+    }
+  }
+
+
+  getSlice = () => {
+    // Calculate slice of ids to be fetched
+    // based on current page number and size from state
+
+    const { page, size, ids } = this.state;
+    const start = page * size;
+    return ids.slice(start, start + size).map(id => {
+      return `${this.base}/item/${id}.json`
+    });
+  }
+
+
+  renderNews = () => {
+    const { news, loading, page, size } = this.state;
+
+    if(news === null || loading) {
       return <div className="loading">Loading news...</div>
     }
 
-    if(!news.length) {
+    if(!news || !news.length) {
       return <div className="loading">Nothing found.</div>
     }
 
     return news.map((item, index) =>
-      <Story index={index + 1} key={item.id} data={item} />
+      <Story index={page * size + index + 1} key={item.id} data={item} />
+    )
+  }
+
+
+  renderLoading = () => {
+    let { page, loading, news } = this.state;
+
+
+    if(loading || !news || !news.length) {
+      return null
+    }
+
+    return (
+      <Link 
+      className="next-page"
+      to={`/page/${+page + 1}`}>More</Link>
     )
   }
 
@@ -60,6 +120,7 @@ class Home extends Component {
     return (
       <Layout>
         {this.renderNews()}
+        {this.renderLoading()}
       </Layout>
     );
   }
