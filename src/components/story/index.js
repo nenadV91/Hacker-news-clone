@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import moment from 'moment';
 
 class Story extends Component {
@@ -10,6 +10,12 @@ class Story extends Component {
       return <div 
       className="loading">
       Loading post...</div>
+    }
+
+    if(!data) {
+      return <div 
+      className="loading">
+      Post not found.</div>
     }
 
     const dateParsed = moment.unix(data.time)
@@ -58,4 +64,4 @@ class Story extends Component {
   }
 }
 
-export default Story
+export default withRouter(Story)

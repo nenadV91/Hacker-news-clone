@@ -1,8 +1,9 @@
 import React from 'react';
 import Layout from 'components/layout';
 
-export default props => (
+
+export default () => (
   <Layout>
-    <div>User: <strong>{props.match.params.id}</strong></div>
+    <div className="text-light">Page not found.</div>
   </Layout>
 )

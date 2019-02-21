@@ -5,8 +5,8 @@ import Navbar from 'components/navbar';
 import Home from 'pages/home';
 import Item from 'pages/item';
 import User from 'pages/user';
+import NotFound from 'pages/404';
 
-const NotFound = () => <div>Page not found</div>
 
 class App extends Component {
   render() {

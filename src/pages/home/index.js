@@ -14,6 +14,11 @@ class Home extends Component {
   }
 
   componentDidUpdate = prev => {
+    // On component update get page parameter from url
+    // Check if its different then page value in state
+    // If its different efetch stories based on new page and update state
+    // This will render next batch of stories
+
     const page = this.props.match.params.page || 0;
 
     if(page !== this.state.page) {
@@ -24,7 +29,12 @@ class Home extends Component {
     }
   }
 
+
   componentWillMount = async () => {
+    // Check if page parameter exists and set it in state if it does
+    // Fetch list of ids and after its finished set ids in state
+    // Then call fetchStories method and set news in state
+
     this.base = 'https://hacker-news.firebaseio.com/v0'
     const url = `${this.base}/topstories.json`;
     const { match: { params: { page } } } = this.props;
@@ -40,24 +50,38 @@ class Home extends Component {
         this.setState({ news, loading: false })
       })
     } catch (err) {
-      console.log(err)
+      this.setState({ news: false, loading: false })
+      return false;
     }
   }
 
+
   fetchStories = async () => {
-    let { page, size, ids } = this.state;
-    const start = page * size;
-    const input = ids.slice(start, start + size).map(id => {
-      return `${this.base}/item/${id}.json`
-    });
+    // Get slice of ids to be fetched
+    // Wait for all stories to be fetched
+    // and then return the result
 
     try {
+      const input = this.getSlice()
       const data = await Promise.all(input.map(link => axios.get(link)))
       return data.map(({ data }) => data)
     } catch (err) {
-      console.log(err)
+      return false;
     }
   }
+
+
+  getSlice = () => {
+    // Calculate slice of ids to be fetched
+    // based on current page number and size from state
+
+    const { page, size, ids } = this.state;
+    const start = page * size;
+    return ids.slice(start, start + size).map(id => {
+      return `${this.base}/item/${id}.json`
+    });
+  }
+
 
   renderNews = () => {
     const { news, loading, page, size } = this.state;
@@ -66,7 +90,7 @@ class Home extends Component {
       return <div className="loading">Loading news...</div>
     }
 
-    if(!news.length) {
+    if(!news || !news.length) {
       return <div className="loading">Nothing found.</div>
     }
 
@@ -76,17 +100,27 @@ class Home extends Component {
   }
 
 
-  render() {
+  renderLoading = () => {
     let { page, loading, news } = this.state;
-    let nextPage = `/page/${+page + 1}`
 
+
+    if(loading || !news || !news.length) {
+      return null
+    }
+
+    return (
+      <Link 
+      className="next-page"
+      to={`/page/${+page + 1}`}>More</Link>
+    )
+  }
+
+
+  render() {
     return (
       <Layout>
         {this.renderNews()}
-
-        {(!loading && news && news.length) ? <Link 
-        className = "next-page"
-        to={nextPage}>More</Link> : null}
+        {this.renderLoading()}
       </Layout>
     );
   }

@@ -11,6 +11,16 @@ class Comments extends Component {
       Loading comments...</div>
     }
 
+    if(data === false) {
+      return null;
+    }
+
+    if(!data.length) {
+      return <div 
+      className="text-light">
+      No comments found.</div>
+    }
+
     return (
       <div>
         {data.map(comment =>
